@@ -4,6 +4,9 @@ from pathlib import Path
 from argparse import ArgumentParser
 import re
 
+from typing import Optional
+
+
 #import nbformat
 import jupytext
 
@@ -84,14 +87,16 @@ def prune_solution(in_filename, out_filename):
         jupytext.write(notebook_out, out_filename)
 
 
-def output_filename(in_filename):
+def output_filename(in_filename: str) -> Optional[str]:
     """
     very rustic for now; the input is expected to contain
     either -corrige or -solution, that gets removed
     """
+    # xxx need some way to configure this
     result = (in_filename
                 .replace("-solution", "")
                 .replace("-corrige", "")
+                .replace(".solutions/", "")
     )
     # IMPORTANT
     # this means we can't guess a decent output filename
@@ -144,7 +149,7 @@ def main():
 
     for solution, student in zip(solutions, students):
         if not student:
-            verbose(f"ignoring {solution} - does not comply with conventions")
+            verbose(f"ignoring {solution} - does not comply with naming conventions")
             retcod = 1
             continue
 
