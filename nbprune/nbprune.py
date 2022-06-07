@@ -85,6 +85,10 @@ def prune_solution(in_filename, out_filename):
 
 
 def output_filename(in_filename):
+    """
+    very rustic for now; the input is expected to contain
+    either -corrige or -solution, that gets removed
+    """
     result = (in_filename
                 .replace("-solution", "")
                 .replace("-corrige", "")
@@ -104,6 +108,9 @@ prune some pieces of a notebook, based on the presence of tags such as
 def main():
     retcod = 0
     parser = ArgumentParser(description=DESCRIPTION)
+    parser.add_argument("-o", "--output", default=None,
+                        help="""set output filename - only for one input solution
+                        """)
     parser.add_argument("-f", "--force", default=False, action='store_true')
     parser.add_argument("-v", "--verbose", default=False, action='store_true')
     parser.add_argument("-V", "--version", default=False, action='store_true')
@@ -119,12 +126,23 @@ def main():
         print(f"nbprune {__version__}")
         return 0
 
+    # solutions is mandatory - but we can't declare it nargs='+'
+    # because of --version
     if not solutions:
         parser.print_help()
 
+    # the --output option
+    if cli_args.output:
+        if len(solutions) == 1:
+            students = [cli_args.output]
+        else:
+            print(f"option --output makes sense only with exactly one input")
+            return 1
+    else:
+        students = [output_filename(solution) for solution in solutions]
 
-    for solution in solutions:
-        student = output_filename(solution)
+
+    for solution, student in zip(solutions, students):
         if not student:
             verbose(f"ignoring {solution} - does not comply with conventions")
             retcod = 1
