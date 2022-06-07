@@ -1,3 +1,7 @@
+# 0.0.3 2022 Jun 7
+
+* can also store inputs in a .solutions/ subfolder
+
 # 0.0.2 2022 Jun 7
 
 * with a -o option to choose an output file
