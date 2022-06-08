@@ -97,6 +97,9 @@ def output_filename(in_filename: str) -> Optional[str]:
                 .replace("-solution", "")
                 .replace("-corrige", "")
                 .replace(".solutions/", "")
+                .replace(".solution/", "")
+                .replace(".corriges/", "")
+                .replace(".corrige/", "")
     )
     # IMPORTANT
     # this means we can't guess a decent output filename
