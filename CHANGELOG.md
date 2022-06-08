@@ -1,3 +1,8 @@
+# 0.0.5 2022 Jun 8
+
+* messing with the scheme again, only 3 rules now
+  about -corrige -howto and .teacher/
+
 # 0.0.4 2022 Jun 8
 
 * more complete and consistent naming scheme based on
