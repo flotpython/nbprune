@@ -1,4 +1,5 @@
-EXAMPLES = $(shell find . -name "*.py" | egrep 'corrige|solution')
+EXAMPLES = $(shell find . -name "*.py" \
+		     | egrep -- 'corrige|howto|teacher')
 
 all: run-files run-output
 

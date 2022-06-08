@@ -89,17 +89,16 @@ def prune_solution(in_filename, out_filename):
 
 def output_filename(in_filename: str) -> Optional[str]:
     """
-    very rustic for now; the input is expected to contain
-    either -corrige or -solution, that gets removed
+    very rustic for now; examples
+    foo-corrige.nb.py -> foo.nb.py
+    .teacher/foo.nb.py -> foo.nb.py
+    .teacher/foo-howto.nb.py -> foo.nb.py
     """
     # xxx need some way to configure this
     result = (in_filename
-                .replace("-solution", "")
                 .replace("-corrige", "")
-                .replace(".solutions/", "")
-                .replace(".solution/", "")
-                .replace(".corriges/", "")
-                .replace(".corrige/", "")
+                .replace("-howto", "")
+                .replace(".teacher/", "")
     )
     # IMPORTANT
     # this means we can't guess a decent output filename
