@@ -1,3 +1,9 @@
+# 0.1.0 2022 Jun 10
+
+* added the -l -L and -d options
+  as helpers to make sure results are under git
+  and/inspect the results for differences from the inputs
+
 # 0.0.5 2022 Jun 8
 
 * messing with the scheme again, only 3 rules now
