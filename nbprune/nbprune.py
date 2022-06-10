@@ -2,14 +2,15 @@
 
 from pathlib import Path
 from argparse import ArgumentParser
+from pydoc import cli
 import re
 
 from typing import Optional
 
-
 #import nbformat
 import jupytext
 
+from nbprune import __version__
 
 # we need this ordered so that longest matches come first
 TAGS = [
@@ -93,11 +94,13 @@ def output_filename(in_filename: str) -> Optional[str]:
     foo-corrige.nb.py -> foo.nb.py
     .teacher/foo.nb.py -> foo.nb.py
     .teacher/foo-howto.nb.py -> foo.nb.py
+    BUT
+    ds-howtos -> intact
     """
     # xxx need some way to configure this
     result = (in_filename
-                .replace("-corrige", "")
-                .replace("-howto", "")
+                .replace("-corrige.", ".")
+                .replace("-howto.", ".")
                 .replace(".teacher/", "")
     )
     # IMPORTANT
@@ -119,6 +122,12 @@ def main():
                         help="""set output filename - only for one input solution
                         """)
     parser.add_argument("-f", "--force", default=False, action='store_true')
+    parser.add_argument("-l", "--list", default=False, action='store_true',
+                        help="only lists output files on stdout and exits")
+    parser.add_argument("-L", "--list-different", default=False, action='store_true',
+                        help="like --list, but only when the pruned version differs")
+    parser.add_argument("-d", "--diff",  default=False, action='store_true',
+                        help="like --list, but display a list of diff commands")
     parser.add_argument("-v", "--verbose", default=False, action='store_true')
     parser.add_argument("-V", "--version", default=False, action='store_true')
     parser.add_argument("solutions", nargs="*")
@@ -129,7 +138,6 @@ def main():
     VERBOSE = cli_args.verbose
 
     if cli_args.version:
-        from nbprune import __version__
         print(f"nbprune {__version__}")
         return 0
 
@@ -149,6 +157,29 @@ def main():
         students = [output_filename(solution) for solution in solutions]
 
 
+    if cli_args.list or cli_args.list_different or cli_args.diff:
+        for solution, student in zip(solutions, students):
+            if cli_args.diff:
+                comment = "# " if not student else ""
+                print(f"{comment}diff {solution} {student} >& /dev/null || echo {solution}")
+                continue
+            if not student:
+                continue
+            if cli_args.list:
+                print(student)
+                continue
+            try:
+                with open(solution) as reader:
+                    v1 = reader.read()
+                with open(student) as reader:
+                    v2 = reader.read()
+                if v1 == v2:
+                    continue
+            except:
+                pass
+            print(student)
+        return 0
+
     for solution, student in zip(solutions, students):
         if not student:
             verbose(f"ignoring {solution} - does not comply with naming conventions")
@@ -164,6 +195,7 @@ def main():
             verbose(f"ignoring {p1}, as {p2} is more recent")
             continue
         message = "created" if not p2.exists() else "overwritten"
+        verbose(f"dealing with {solution}")
         prune_solution(solution, student)
         print(f"{student} {message}")
     return retcod
