@@ -99,7 +99,9 @@ def output_filename(in_filename: str) -> Optional[str]:
     """
     # xxx need some way to configure this
     result = (in_filename
+                .replace("-corrige-nb.", "-nb.")
                 .replace("-corrige.", ".")
+                .replace("-howto-nb.", "-nb.")
                 .replace("-howto.", ".")
                 .replace(".teacher/", "")
     )
