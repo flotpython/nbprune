@@ -1,3 +1,8 @@
+# 0.2.0 2022 Dec 15
+
+* drop the builtin renaming rule that deals with howto files
+  and btw will soon add a way to customize the renaming rules
+
 # 0.1.0 2022 Jun 10
 
 * added the -l -L and -d options
