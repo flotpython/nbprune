@@ -1,3 +1,9 @@
+# 0.2.1 2022 Dec 16
+
+* renaming still hardwired, but simpler, essentially
+  (.*)/.teacher/(.*)-corrige(.*) is rewritten into \1/\2\3
+* -lv and -Lv show both inputs and ouputs
+
 # 0.2.0 2022 Dec 15
 
 * drop the builtin renaming rule that deals with howto files
