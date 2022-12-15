@@ -108,6 +108,7 @@ def output_filename(in_filename: str) -> Optional[str]:
         return None
     return result
 
+
 DESCRIPTION = f"""
 prune some pieces of a notebook, based on the presence of tags such as
 
@@ -173,7 +174,7 @@ def main():
                     v2 = reader.read()
                 if v1 == v2:
                     continue
-            except:
+            except FileNotFoundError:
                 pass
             print(student)
         return 0
@@ -190,7 +191,7 @@ def main():
             retcod = 1
             continue
         if not cli_args.force and p2.exists() and p2.stat().st_mtime > p1.stat().st_mtime:
-            verbose(f"ignoring {p1}, as {p2} is more recent")
+            verbose(f"leaving  {p2} that is more recent than {p1}")
             continue
         message = "created" if not p2.exists() else "overwritten"
         verbose(f"dealing with {solution}")
