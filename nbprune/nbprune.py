@@ -2,7 +2,6 @@
 
 from pathlib import Path
 from argparse import ArgumentParser
-from pydoc import cli
 import re
 
 from typing import Optional
@@ -93,7 +92,6 @@ def output_filename(in_filename: str) -> Optional[str]:
     very rustic for now; examples
     foo-corrige.nb.py -> foo.nb.py
     .teacher/foo.nb.py -> foo.nb.py
-    .teacher/foo-howto.nb.py -> foo.nb.py
     BUT
     ds-howtos -> intact
     """
@@ -101,8 +99,6 @@ def output_filename(in_filename: str) -> Optional[str]:
     result = (in_filename
                 .replace("-corrige-nb.", "-nb.")
                 .replace("-corrige.", ".")
-                .replace("-howto-nb.", "-nb.")
-                .replace("-howto.", ".")
                 .replace(".teacher/", "")
     )
     # IMPORTANT
