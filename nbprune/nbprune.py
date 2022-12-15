@@ -160,6 +160,7 @@ def main():
             if not student:
                 continue
             if cli_args.list:
+                verbose(f"{solution} -> ", end='')
                 print(student)
                 continue
             try:
@@ -171,6 +172,7 @@ def main():
                     continue
             except FileNotFoundError:
                 pass
+            verbose(f"{solution} -> ", end='')
             print(student)
         return 0
 
