@@ -90,17 +90,12 @@ def prune_solution(in_filename, out_filename):
 def output_filename(in_filename: str) -> Optional[str]:
     """
     very rustic for now; examples
-    foo-corrige.nb.py -> foo.nb.py
-    .teacher/foo.nb.py -> foo.nb.py
-    BUT
-    ds-howtos -> intact
+    */.teacher/*-corrige* -> ***
     """
-    # xxx need some way to configure this
-    result = (in_filename
-                .replace("-corrige-nb.", "-nb.")
-                .replace("-corrige.", ".")
-                .replace(".teacher/", "")
-    )
+    regexp = "(?P<prefix>.*)/\.teacher/(?P<stem>.*)-corrige(?P<suffix>.*)$"
+    def filename_rewriter(match):
+        return f"{match.group('prefix')}/{match.group('stem')}{match.group('suffix')}"
+    result = re.sub(regexp, filename_rewriter, in_filename)
     # IMPORTANT
     # this means we can't guess a decent output filename
     # from the input name - we MUST NOT run on those files
