@@ -93,7 +93,7 @@ def output_filename(in_filename: str) -> Optional[str]:
     */.teacher/*-corrige* -> \1\2\3
     with the ability to omit the initial /
     """
-    regexp = "(?P<prefix>.*/)?\.teacher/(?P<stem>.*)-corrige(?P<suffix>.*)$"
+    regexp = r"(?P<prefix>.*/)?\.teacher/(?P<stem>.*)-corrige(?P<suffix>.*)$"
     def filename_rewriter(match):
         # this is None if first group is not there
         prefix = match.group('prefix') or ""
@@ -111,14 +111,20 @@ DESCRIPTION = f"""
 prune some pieces of a notebook, based on the presence of tags such as
 
 {' '.join(sorted(TAGS))}
+
+The command supports other convenience modes (see e.g. --jupyter)
+that change its behaviour and thus cannot be cumulated;
+for instance if you mention --jupyter --list it will only do --jupyter
 """
 def main():
     retcod = 0
     parser = ArgumentParser(description=DESCRIPTION)
     parser.add_argument("-o", "--output", default=None,
-                        help="""set output filename - only for one input solution
-                        """)
+                        help="set output filename - only for a single input")
     parser.add_argument("-f", "--force", default=False, action='store_true')
+    parser.add_argument("-j", "--jupyter", default=False, action='store_true',
+                        help="returns 0 if all inputs are notebooks, 1 otherwise;"
+                             " no output unless -v is given")
     parser.add_argument("-l", "--list", default=False, action='store_true',
                         help="only lists output files on stdout and exits")
     parser.add_argument("-L", "--list-different", default=False, action='store_true',
@@ -153,6 +159,28 @@ def main():
     else:
         students = [output_filename(solution) for solution in solutions]
 
+    # jupyter mode (check if proper notebook)
+
+    if cli_args.jupyter:
+        success = True
+        for solution in solutions:
+            try:
+                with open(solution) as reader:
+                    notebook_in = jupytext.read(reader)
+                    # actually jupytext.read() is very permissive and will accept to open
+                    # raw .md or .py files, and we need to be a little picky
+                    # so: if the metadata keys is reduced to a single 'jupytext' entry,
+                    # it is considered a plain file
+                    if list(notebook_in.metadata.keys()) == ['jupytext']:
+                        verbose(f"{solution} is a plain file")
+                        success = False
+            except Exception as exc:
+                success = False
+                verbose(f"{solution} is not a notebook ({type(exc)})")
+
+        return 0 if success else 1
+
+    # list files mode
 
     if cli_args.list or cli_args.list_different or cli_args.diff:
         for solution, student in zip(solutions, students):
