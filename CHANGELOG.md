@@ -1,3 +1,8 @@
+# 0.2.2 2022 Dec 16
+
+* tweak the renaming rule to allow a path to start with .teacher
+* the -j option helps triage notebooks and plain files
+
 # 0.2.1 2022 Dec 16
 
 * renaming still hardwired, but simpler, essentially
