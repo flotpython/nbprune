@@ -89,12 +89,15 @@ def prune_solution(in_filename, out_filename):
 
 def output_filename(in_filename: str) -> Optional[str]:
     """
-    very rustic for now; examples
-    */.teacher/*-corrige* -> ***
+    very rustic for now, something like
+    */.teacher/*-corrige* -> \1\2\3
+    with the ability to omit the initial /
     """
-    regexp = "(?P<prefix>.*)/\.teacher/(?P<stem>.*)-corrige(?P<suffix>.*)$"
+    regexp = "(?P<prefix>.*/)?\.teacher/(?P<stem>.*)-corrige(?P<suffix>.*)$"
     def filename_rewriter(match):
-        return f"{match.group('prefix')}/{match.group('stem')}{match.group('suffix')}"
+        # this is None if first group is not there
+        prefix = match.group('prefix') or ""
+        return f"{prefix}{match.group('stem')}{match.group('suffix')}"
     result = re.sub(regexp, filename_rewriter, in_filename)
     # IMPORTANT
     # this means we can't guess a decent output filename
