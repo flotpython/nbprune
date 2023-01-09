@@ -12,8 +12,12 @@ import jupytext
 from nbprune import __version__
 
 # we need this ordered so that longest matches come first
-TAGS = [
+TAGS_LINE = [
+    'prune-line-begin',
+    'prune-line-end',
     'prune-line',
+]
+TAGS_CELL = [
     'prune-cell',
     'prune-begin-next',
     'prune-end-previous',
@@ -35,29 +39,43 @@ def pruned_copy(notebook):
     copying = True
 
     # for searching in lines
-    pattern = f"^[ \t#]*({'|'.join(TAGS)})"
+    pattern_line_bol = f"^[ \t#]*({'|'.join(TAGS_LINE)})"
+    pattern_line_eol = f"#.*({'|'.join(TAGS_LINE)})[ \t]*$"
+    pattern_cell = f"^[ \t#]*({'|'.join(TAGS_CELL)})"
 
     # for searching in metadata
     def tag_in_metadata(cell):
         cell_tags = cell.get('metadata', {}).get('tags', [])
-        for tag in TAGS:
+        # line-oriented tags don't make sense in a cell
+        for tag in TAGS_CELL:
             if tag in cell_tags:
                 return tag
 
     for cellno, cell in enumerate(result.cells, 1):
         cell_in_output = copying
         lines = []
+        skipping_lines = False
         tag = tag_in_metadata(cell)
         if tag:
             verbose(f"found tag {tag} in metadata of cell #{cellno}")
         for lineno, line in enumerate(cell.source.split("\n"), 1):
             line_in_output = True
-            if match := re.search(pattern, line):
+            if match := (re.search(pattern_line_bol, line) or
+                         re.search(pattern_line_eol, line) or
+                         re.search(pattern_cell, line)):
                 tag = match.group(1)
                 verbose(f"found tag {tag} in line #{lineno} of cell #{cellno}")
-                if tag in ('prune-line', 'prune-begin-next', 'prune-end-previous'):
-                    line_in_output = False
-            if line_in_output:
+                match tag:
+                    case 'prune-line' | 'prune-begin-next' | 'prune-end-previous':
+                        line_in_output = False
+                    case 'prune-line-begin':
+                        skipping_lines = True
+                    case 'prune-line-end':
+                        skipping_lines = False
+                        line_in_output = False
+            if skipping_lines or not line_in_output:
+                pass
+            else:
                 lines.append(line)
         if tag == 'prune-cell':
             cell_in_output = False
@@ -110,7 +128,7 @@ def output_filename(in_filename: str) -> Optional[str]:
 DESCRIPTION = f"""
 prune some pieces of a notebook, based on the presence of tags such as
 
-{' '.join(sorted(TAGS))}
+{' '.join(sorted(TAGS_LINE + TAGS_CELL))}
 
 The command supports other convenience modes (see e.g. --jupyter)
 that change its behaviour and thus cannot be cumulated;
