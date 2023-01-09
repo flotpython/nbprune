@@ -1,3 +1,8 @@
+# 0.3.0 2023 Jan 9
+
+* add prune-line-begin and prune-line-end logic
+  to skip just parts of a cell; useful for partial classes
+
 # 0.2.2 2022 Dec 16
 
 * tweak the renaming rule to allow a path to start with .teacher
