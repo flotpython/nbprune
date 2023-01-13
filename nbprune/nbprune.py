@@ -228,7 +228,8 @@ def main():
     for solution, student in zip(solutions, students):
         if not student:
             verbose(f"ignoring {solution} - does not comply with naming conventions")
-            retcod = 1
+            # not a big deal
+            # retcod = 1
             continue
 
         p1, p2 = Path(solution), Path(student)
