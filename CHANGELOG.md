@@ -1,3 +1,8 @@
+# 0.3.1 2023 Jan 9
+
+* an input that does not comply with naming conventions
+  is no longer deemed a problem
+
 # 0.3.0 2023 Jan 9
 
 * add prune-line-begin and prune-line-end logic
