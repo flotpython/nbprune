@@ -1,9 +1,7 @@
 # nbprune
 
-typical use case is, a teacher writes a notebook, with solution(s) to a problem that students must solve
-
-so this means 2 versions, one for the teacher(s) with the solutions, and one for the students
-
+typical use case is, a teacher writes a notebook, with solution(s) to a problem that students must solve  
+so this means 2 versions, one for the teacher(s) with the solutions, and one for the students  
 this tool defines annotations that the teacher can use to define the parts that will be automatically removed by the tool
 
 ## keywords
@@ -12,16 +10,21 @@ here are the recognized keywords
 
 | tag | meaning |
 |-|-|
-| `prune-line` (*) | remove just that one line from the output |
 | `prune-cell` | remove this cell from the output |
 | `prune-begin` | remove this cell and the ones below from the output |
 | `prune-end` | remove this cell, but resume insertion on the next cell |
-| `prune-begin-next` (**) | keep this cell from the output, and start pruning at the next one |
-| `prune-end-previous` (**) | stop pruning, and insert the current cell |
+| `prune-begin-next` (*) | keep this cell from the output, and start pruning at the next one |
+| `prune-end-previous` (*) | stop pruning, and insert the current cell |
+| `prune-line` (*) | remove just that one line from the output |
+| `prune-line-begin` (**) | remove that line and the following ones |
+| `prune-line-end` (**) | remove that line but the following ones will show up |
 
 **NOTES**
-* (*) `prune-line` of course is not relevant, and ignored, if set in the cell's metadata tags
-* (**) because `prune-begin-next` and `prune-end-previous` appear in a cell that is visible, the whole line containing the tag is removed from the output, so it is probably best to keep these tags on a separate
+
+* (*) because `prune-begin-next` and `prune-end-previous` appear in a cell that
+  is visible, the whole line containing the tag is removed from the output, so
+  it is probably best to keep these tags on a separate line
+* (**) `prune-line` variants of course are not relevant, and are ignored, if set in the cell's metadata tags
 
 ## line format
 
@@ -35,7 +38,7 @@ so for exemple
 |:-|-|
 | prune-cell | yes |
 | # prune-cell | yes |
-| # # prune-cell | yes | 
+| # # prune-cell | yes |
 | some code prune-cell | no |
 
 ## cell metadata
