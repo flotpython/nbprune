@@ -1,9 +1,5 @@
 ---
 jupytext:
-  cell_metadata_filter: all,-hidden,-heading_collapsed,-run_control,-trusted
-  notebook_metadata_filter: all, -jupytext.text_representation.jupytext_version, -jupytext.text_representation.format_version,
-    -language_info.version, -language_info.codemirror_mode.version, -language_info.codemirror_mode,
-    -language_info.file_extension, -language_info.mimetype, -toc
   text_representation:
     extension: .md
     format_name: myst
@@ -117,7 +113,7 @@ class Node:
     """
     # a single line to hide to hide # prune-line
     def __init__(self, station: "Station"):
-        # ...
+        ...
         # prune-line-begin
         self.station = station
         # use a dictionary to attach a value to each link (here the line number)
@@ -130,17 +126,15 @@ class Node:
         return str(f"[Node {self.station.name}]")
 
     def add_edge(self, neighbour: "Node", line):
-        # xxx ...
         self.line_by_neighbour[neighbour] = line
 
     def nb_edges(self):
-        # xxx ...
         return len(self.line_by_neighbour)
-        # prune-line-end
+    # prune-line-end
 
     def iter_neighbours(self):
         "iterates (neighbour, line) over neighbours"
-        # ...
+        ...
         # prune-line-begin
         for neighbour, line in self.line_by_neighbour.items():
             yield neighbour, line
