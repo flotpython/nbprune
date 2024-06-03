@@ -1,3 +1,7 @@
+# 0.3.2 2024 Jun 3
+
+* update README to mention `prune-line-begin` and `prune-line-end`
+
 # 0.3.1 2023 Jan 9
 
 * an input that does not comply with naming conventions
