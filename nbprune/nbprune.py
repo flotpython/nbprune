@@ -8,8 +8,16 @@ from typing import Optional
 
 #import nbformat
 import jupytext
+from jupytext.config import find_jupytext_configuration_file, load_jupytext_configuration_file
 
 from nbprune import __version__
+
+
+def jupytext_config():
+    config_file = find_jupytext_configuration_file('.')
+    config = load_jupytext_configuration_file(config_file)
+    return config
+
 
 # we need this ordered so that longest matches come first
 TAGS_LINE = [
@@ -100,9 +108,9 @@ def pruned_copy(notebook):
 
 def prune_solution(in_filename, out_filename):
     with open(in_filename) as reader:
-        notebook_in = jupytext.read(reader)
+        notebook_in = jupytext.read(reader, config=jupytext_config())
         notebook_out = pruned_copy(notebook_in)
-        jupytext.write(notebook_out, out_filename)
+        jupytext.write(notebook_out, out_filename, config=jupytext_config())
 
 
 def output_filename(in_filename: str) -> Optional[str]:
@@ -184,7 +192,7 @@ def main():
         for solution in solutions:
             try:
                 with open(solution) as reader:
-                    notebook_in = jupytext.read(reader)
+                    notebook_in = jupytext.read(reader, config=jupytext_config())
                     # actually jupytext.read() is very permissive and will accept to open
                     # raw .md or .py files, and we need to be a little picky
                     # so: if the metadata keys is reduced to a single 'jupytext' entry,
