@@ -1,3 +1,7 @@
+# 0.4.0 2024 Jun 5
+
+* uses jupytext config file to read and write
+
 # 0.3.2 2024 Jun 3
 
 * update README to mention `prune-line-begin` and `prune-line-end`
