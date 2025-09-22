@@ -1,0 +1,40 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+
+[project]
+name = "nbprune"
+version = "0.5.0"
+dependencies = [ "jupytext", ]
+requires-python = ">=3.8"
+readme = "README.md"
+license = {text = "MIT License"}
+description = """With this tool, one can define pieces of a notebook \
+that belong to teachers and should not be exposed to students."""
+keywords = ["jupyter", "notebook", "education", "teaching"]
+authors = [
+  {name = "Thierry Parmentelat", email = "thierry.parmentelat@minesparis.psl.eu"},
+]
+
+# [project.optional-dependencies]
+# gui = ["PyQt5"]
+# cli = [
+#   "click",
+# ]
+
+
+[tool.hatch.build.targets.wheel]
+packages = [ "nbprune" ]
+
+
+[project.urls]
+Repository = "https://github.com/flotpython/nbprune"
+"Bug Tracker" = "https://github.com/flotpython/nbprune/issues"
+# Homepage = "https://example.com"
+# Documentation = "https://readthedocs.org"
+# Changelog = "https://github.com/me/spam/blob/master/CHANGELOG.md"
+
+
+[project.scripts]
+nbprune = "nbprune.nbprune:main"
