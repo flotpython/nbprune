@@ -31,6 +31,8 @@ TAGS_CELL = [
     'prune-end-previous',
     'prune-begin',
     'prune-end',
+    'prune-remove-input',
+    'prune-remove-output',
 ]
 
 VERBOSE = False
@@ -61,6 +63,7 @@ def pruned_copy(notebook):
 
     for cellno, cell in enumerate(result.cells, 1):
         cell_in_output = copying
+        extra_cell_tags = []
         lines = []
         skipping_lines = False
         tag = tag_in_metadata(cell)
@@ -99,8 +102,18 @@ def pruned_copy(notebook):
         elif tag == 'prune-end-previous':
             copying = True
             cell_in_output = True
+        elif tag == 'prune-remove-input':
+            extra_cell_tags.append('remove-input')
+        elif tag == 'prune-remove-output':
+            extra_cell_tags.append('remove-output')
         if cell_in_output:
             cell.source = "\n".join(lines)
+            if extra_cell_tags:
+                if 'metadata' not in cell:
+                    cell['metadata'] = {}
+                cell_tags = cell['metadata'].get('tags', [])
+                cell_tags = sorted(set(cell_tags) | set(extra_cell_tags))
+                cell['metadata']['tags'] = cell_tags
             new_cells.append(cell)
     result.cells = new_cells
     return result

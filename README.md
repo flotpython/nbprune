@@ -17,7 +17,9 @@ here are the recognized keywords
 | `prune-end-previous` (*) | stop pruning, and insert the current cell |
 | `prune-line` (*) | remove just that one line from the output |
 | `prune-line-begin` (**) | remove that line and the following ones |
-| `prune-line-end` (**) | remove that line but the following ones will show up |
+| `prune-line-end` (**) | remove that line, but the following ones will show up |
+| `prune-remove-input` | keep the (code) cell, but mark it to have its input removed |
+| `prune-remove-output` | keep the (code) cell, but mark it to have its output removed |
 
 **NOTES**
 
