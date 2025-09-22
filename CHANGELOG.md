@@ -1,3 +1,8 @@
+# 0.5.0 2025 Sep 22
+
+* support for `prune-remove-input` and `prune-remove-output` tags
+  to propagate `remove-input` or `remove-output` on the output cell
+
 # 0.4.0 2024 Jun 5
 
 * uses jupytext config file to read and write
