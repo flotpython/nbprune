@@ -5,7 +5,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "nbprune"
-version = "0.5.0"
+version = "0.5.1"
 dependencies = [ "jupytext", ]
 requires-python = ">=3.8"
 readme = "README.md"

@@ -1,3 +1,10 @@
+# 0.5.1 2025 Oct 01
+
+* loosen naming conventions - no longer need to put inputs in .teacher  
+  they still need to contain `-corrige` though
+* protect against a missing jupytext config
+* more helpful help for --force
+
 # 0.5.0 2025 Sep 22
 
 * support for `prune-remove-input` and `prune-remove-output` tags
