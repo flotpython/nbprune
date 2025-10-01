@@ -1,8 +1,9 @@
 #!/usr/bin/env python
 
-from pathlib import Path
-from argparse import ArgumentParser
+import sys
 import re
+from pathlib import Path
+from argparse import ArgumentParser, RawDescriptionHelpFormatter
 
 from typing import Optional
 
@@ -11,12 +12,6 @@ import jupytext
 from jupytext.config import find_jupytext_configuration_file, load_jupytext_configuration_file
 
 from nbprune import __version__
-
-
-def jupytext_config():
-    config_file = find_jupytext_configuration_file('.')
-    config = load_jupytext_configuration_file(config_file)
-    return config
 
 
 # we need this ordered so that longest matches come first
@@ -41,6 +36,14 @@ def verbose(*args, **kwds):
     if VERBOSE:
         print(*args, **kwds)
 
+
+def jupytext_config():
+    config_file = find_jupytext_configuration_file('.')
+    try:
+        return load_jupytext_configuration_file(config_file)
+    except (TypeError, AttributeError):
+        print("warning, no jupytext config found...", file=sys.stderr)
+        return None
 
 
 def pruned_copy(notebook):
@@ -128,39 +131,54 @@ def prune_solution(in_filename, out_filename):
 
 def output_filename(in_filename: str) -> Optional[str]:
     """
-    very rustic for now, something like
+    (1) very rustic for now, something like
     */.teacher/*-corrige* -> \1\2\3
     with the ability to omit the initial /
+    (2) otherwise
+    *-corrige* -> \1\2
     """
-    regexp = r"(?P<prefix>.*/)?\.teacher/(?P<stem>.*)-corrige(?P<suffix>.*)$"
-    def filename_rewriter(match):
+    regexp1 = r"(?P<prefix>.*/)?\.teacher/(?P<stem>.*)-corrige(?P<suffix>.*)$"
+    def filename_rewriter1(match):
         # this is None if first group is not there
         prefix = match.group('prefix') or ""
         return f"{prefix}{match.group('stem')}{match.group('suffix')}"
-    result = re.sub(regexp, filename_rewriter, in_filename)
+    regexp2 = r"(?P<prefix>.*)-corrige(?P<suffix>.*)$"
+    def filename_rewriter2(match):
+        return f"{match.group('prefix')}{match.group('suffix')}"
+    result = re.sub(regexp1, filename_rewriter1, in_filename)
+    if result == in_filename:
+        result = re.sub(regexp2, filename_rewriter2, in_filename)
     # IMPORTANT
     # this means we can't guess a decent output filename
     # from the input name - we MUST NOT run on those files
     if result == in_filename:
+        verbose(f"ignoring {in_filename} as we cannot guess a decent output filename", file=sys.stderr)
         return None
     return result
 
 
 DESCRIPTION = f"""
-prune some pieces of a notebook, based on the presence of tags such as
-
-{' '.join(sorted(TAGS_LINE + TAGS_CELL))}
+prune some pieces of a notebook, based on the presence of tags - see list below
 
 The command supports other convenience modes (see e.g. --jupyter)
 that change its behaviour and thus cannot be cumulated;
 for instance if you mention --jupyter --list it will only do --jupyter
+
+supported tags list: {' '.join(sorted(TAGS_LINE + TAGS_CELL))}
+
 """
 def main():
     retcod = 0
-    parser = ArgumentParser(description=DESCRIPTION)
+    parser = ArgumentParser(
+        description=DESCRIPTION,
+        formatter_class=RawDescriptionHelpFormatter,
+)
     parser.add_argument("-o", "--output", default=None,
                         help="set output filename - only for a single input")
-    parser.add_argument("-f", "--force", default=False, action='store_true')
+    parser.add_argument("-f", "--force", default=False, action='store_true',
+                        help="by default, ignore input if output is more recent, " \
+                        "but always process inputs if -f is given"
+                        )
     parser.add_argument("-j", "--jupyter", default=False, action='store_true',
                         help="returns 0 if all inputs are notebooks, 1 otherwise;"
                              " no output unless -v is given")
@@ -259,7 +277,7 @@ def main():
             retcod = 1
             continue
         if not cli_args.force and p2.exists() and p2.stat().st_mtime > p1.stat().st_mtime:
-            verbose(f"leaving  {p2} that is more recent than {p1}")
+            verbose(f"leaving  {p2} that is more recent than {p1}", file=sys.stderr)
             continue
         message = "created" if not p2.exists() else "overwritten"
         verbose(f"dealing with {solution}")
