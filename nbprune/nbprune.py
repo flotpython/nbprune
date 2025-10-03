@@ -36,10 +36,12 @@ def verbose(*args, **kwds):
     if VERBOSE:
         print(*args, **kwds)
 
-
 def jupytext_config():
-    config_file = find_jupytext_configuration_file('.')
+    # see https://github.com/mwouts/jupytext/issues/1440
+    absolute = str(Path('.').absolute())
+    config_file = find_jupytext_configuration_file(absolute)
     try:
+        verbose(f"found jupytext config in {config_file}")
         return load_jupytext_configuration_file(config_file)
     except (TypeError, AttributeError):
         print("warning, no jupytext config found...", file=sys.stderr)
