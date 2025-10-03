@@ -1,3 +1,8 @@
+# 0.5.2 2025 Oct 03
+
+* more robust way to spot jupytext config file
+  work around https://github.com/mwouts/jupytext/issues/1440
+
 # 0.5.1 2025 Oct 01
 
 * loosen naming conventions - no longer need to put inputs in .teacher  
