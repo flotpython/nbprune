@@ -1,3 +1,8 @@
+# 0.5.3 2025 Oct 03
+
+* fix hard-wired version in `version.py`  
+  was broken since the move to pyproject.toml
+
 # 0.5.2 2025 Oct 03
 
 * more robust way to spot jupytext config file
